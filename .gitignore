@@ -9,6 +9,10 @@
 *.dylib
 ./dt
 
+# build output
+dist
+
+# taskfile state tracking
 .task
 
 # Test binary, built with `go test -c`
