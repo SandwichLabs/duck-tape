@@ -1,0 +1,15 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  build:
+    vars:
+      USE_DIR: '{{.DIR | default "$PWD" }}'
+    desc: Build the ducktape binary
+    cmds:
+      - go build -v -o=../../dist/apps/odt .
+    generates:
+      - ./dist/apps/odt/dt
+    sources:
+      - ./**/*.go

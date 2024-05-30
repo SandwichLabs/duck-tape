@@ -1,0 +1,29 @@
+# Original source https://github.com/go-task/task/blob/main/.github/workflows/lint.yml
+name: Lint DuckTape
+
+on:
+  pull_request:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+#    paths:
+#      - apps/dt/**/*
+jobs:
+  lint:
+    name: Lint
+    strategy:
+      matrix:
+        go-version: [1.22.x]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{matrix.go-version}}
+      - uses: actions/checkout@v4
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.55.2
+          working-directory: apps/dt

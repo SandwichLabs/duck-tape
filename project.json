@@ -1,0 +1,21 @@
+{
+  "root": "apps/odt",
+  "sourceRoot": "apps/odt/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go build -o=../../dist/apps/odt/ .",
+        "cwd": "apps/odt"
+      }
+    },
+    "run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run .",
+        "cwd": "apps/odt"
+      }
+    }
+  }
+}
