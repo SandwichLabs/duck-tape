@@ -3,6 +3,9 @@
 version: '3'
 
 tasks:
+  default:
+    cmds:
+      - task --list
   build:
     vars:
       USE_DIR: '{{.DIR | default "$PWD" }}'
