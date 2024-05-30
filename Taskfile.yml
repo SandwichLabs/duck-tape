@@ -8,8 +8,8 @@ tasks:
       USE_DIR: '{{.DIR | default "$PWD" }}'
     desc: Build the ducktape binary
     cmds:
-      - go build -v -o=../../dist/apps/odt .
+      - go build -v -o=dist/dt .
     generates:
-      - ./dist/apps/odt/dt
+      - dist/dt
     sources:
       - ./**/*.go
