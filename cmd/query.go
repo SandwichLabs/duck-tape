@@ -118,5 +118,6 @@ func init() {
 	rootCmd.AddCommand(queryCmd)
 	queryCmd.Flags().StringArrayP("connections", "c", []string{}, "One or more connection configurations to attach")
 	queryCmd.Flags().StringArrayP("param", "p", []string{}, "One or more parameters to pass to the query")
-
+	// Optionally save the query to the ducktape folder for later use
+	queryCmd.Flags().BoolP("save", "s", false, "Save the query to the ducktape folder")
 }

@@ -8,8 +8,6 @@ on:
       - v*
     branches:
       - main
-#    paths:
-#      - apps/dt/**/*
 jobs:
   lint:
     name: Lint
