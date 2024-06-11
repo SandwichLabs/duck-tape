@@ -56,10 +56,5 @@ release:
   github:
     owner: zorndorff
     name: duck-tape
-    draft: false
-    prerelease: false
-    files:
-      - dist/*
-    changelog: CHANGELOG.md
-    body: |
-      {{ .ReleaseNotes }}
+  draft: false
+  include_meta: true
