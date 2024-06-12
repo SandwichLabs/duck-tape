@@ -21,26 +21,19 @@ tasks:
     desc: Installs goreleaser
     cmds:
       - go install github.com/goreleaser/goreleaser@latest
-
+  build:release:
+    desc: Build the DuckTape binaries using goreleaser
+    cmds:
   release:*:
-    desc: Prepare the project for a new release
+    desc: Release the DuckTape binary
     summary: |
-      This task will do the following:
-
-      - Update the version and date in the CHANGELOG.md file
-      - Update the version in the package.json and package-lock.json files
-      - Copy the latest docs to the "current" version on the website
-      - Commit the changes
-      - Create a new tag
-      - Push the commit/tag to the repository
-      - Create a GitHub release
-
-      To use the task, simply run "task release:<version>" where "<version>" is is one of:
-
-      - "major" - Bumps the major number
-      - "minor" - Bumps the minor number
-      - "patch" - Bumps the patch number
-      - A semver compatible version number (e.g. "1.2.3")
+      This task will build the DuckTape binary and release it to GitHub:
+      - Build the DuckTape binary
+      - Push the tag to GitHub
+      - Create a new release on GitHub
+      - Upload the ./dist/ artifacts to the release
+    vars:
+      VERSION: "{{index .MATCH 0}}"
     preconditions:
       - sh: test $(git rev-parse --abbrev-ref HEAD) = "main"
         msg: "You must be on the main branch to release"
@@ -50,11 +43,10 @@ tasks:
     cmds:
       - cmd: echo "Releasing v{{.VERSION}}"
         silent: true
-      - "go run ./cmd/release {{.VERSION}}"
-      - "git add --all"
-      - "git commit -m v{{.VERSION}}"
-      - "git push"
+      - task: build:release
       - "git tag v{{.VERSION}}"
       - "git push origin tag v{{.VERSION}}"
+      - gh release create v{{.VERSION}} --generate-notes
+      - gh release upload v{{.VERSION}} ./dist/*
       - cmd: printf "%s" '{{.COMPLETE_MESSAGE}}'
         silent: true
