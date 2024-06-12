@@ -44,9 +44,9 @@ tasks:
     cmds:
       - cmd: echo "Releasing v{{.VERSION}}"
         silent: true
-      - task: build:release
       - "git tag v{{.VERSION}}"
       - "git push origin tag v{{.VERSION}}"
+      - task: build:release
       - gh release create v{{.VERSION}} -F dist/CHANGELOG.md
       - gh release upload v{{.VERSION}} ./dist/*
       - cmd: printf "%s" '{{.COMPLETE_MESSAGE}}'
