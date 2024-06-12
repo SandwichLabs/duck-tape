@@ -24,6 +24,7 @@ tasks:
   build:release:
     desc: Build the DuckTape binaries using goreleaser
     cmds:
+      - goreleaser release --skip=publish --clean
   release:*:
     desc: Release the DuckTape binary
     summary: |
@@ -46,7 +47,7 @@ tasks:
       - task: build:release
       - "git tag v{{.VERSION}}"
       - "git push origin tag v{{.VERSION}}"
-      - gh release create v{{.VERSION}} --generate-notes
+      - gh release create v{{.VERSION}} -F dist/CHANGELOG.md
       - gh release upload v{{.VERSION}} ./dist/*
       - cmd: printf "%s" '{{.COMPLETE_MESSAGE}}'
         silent: true
