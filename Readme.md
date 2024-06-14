@@ -4,6 +4,7 @@
 
 Give your terminal sql super powers.
 
+> Note This is extremely early in development and is not ready for production use.
 
 ## Installation
 
