@@ -46,6 +46,3 @@ var getConnectionCmd = &cobra.Command{
 		log.Infof("connection: %v", connection)
 	},
 }
-
-func init() {
-}

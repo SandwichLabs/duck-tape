@@ -44,7 +44,8 @@ func EnsureWorkspace(root_path string, workspace string) {
 	log.Infof("Workspace folder: %s", workspacePath)
 	_, err := os.Stat(workspacePath)
 	if os.IsNotExist(err) {
-		os.MkdirAll(workspacePath, 0755)
+		err = os.MkdirAll(workspacePath, 0755)
+		cobra.CheckErr(err)
 		log.Infof("Workspace folder created at: %s", workspacePath)
 	} else {
 		log.Infof("Workspace folder already exists at: %s", workspacePath)
