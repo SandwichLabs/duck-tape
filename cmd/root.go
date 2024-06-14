@@ -50,7 +50,8 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringP("workspace", "w", "dev", "workspace folder (default is $HOME/.dt/dev)")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.dt/.dt.yaml)")
-	viper.BindPFlag("workspace", rootCmd.PersistentFlags().Lookup("workspace"))
+	err := viper.BindPFlag("workspace", rootCmd.PersistentFlags().Lookup("workspace"))
+	cobra.CheckErr(err)
 	rootCmd.AddCommand(initCmd)
 }
 
@@ -70,7 +71,8 @@ func initConfig() {
 		// create a .dt folder in the home directory if it doesn't exist
 		_, err = os.Stat(configPath)
 		if os.IsNotExist(err) {
-			os.MkdirAll(configPath, 0755)
+			err = os.MkdirAll(configPath, 0755)
+			cobra.CheckErr(err)
 		}
 		viper.AddConfigPath(configPath)
 		viper.SetConfigType("yaml")

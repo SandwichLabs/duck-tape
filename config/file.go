@@ -27,7 +27,8 @@ func EnsureConfig(vip *viper.Viper) {
 	home, err := os.UserHomeDir()
 	cobra.CheckErr(err)
 	configPath := fmt.Sprintf("%s/.dt", home)
-	SetWorkspaceDb(workspace, "dt.db", true)
+	_, err = SetWorkspaceDb(workspace, "dt.db", true)
+	cobra.CheckErr(err)
 	EnsureWorkspace(configPath, workspace)
 	err = vip.SafeWriteConfig()
 	cobra.CheckErr(err)
@@ -44,7 +45,8 @@ func EnsureWorkspace(root_path string, workspace string) {
 	log.Infof("Workspace folder: %s", workspacePath)
 	_, err := os.Stat(workspacePath)
 	if os.IsNotExist(err) {
-		os.MkdirAll(workspacePath, 0755)
+		err = os.MkdirAll(workspacePath, 0755)
+		cobra.CheckErr(err)
 		log.Infof("Workspace folder created at: %s", workspacePath)
 	} else {
 		log.Infof("Workspace folder already exists at: %s", workspacePath)
