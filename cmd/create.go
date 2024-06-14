@@ -12,7 +12,8 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Parent command for creating resources",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		err := cmd.Help()
+		cobra.CheckErr(err)
 	},
 }
 
