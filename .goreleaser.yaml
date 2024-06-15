@@ -18,9 +18,9 @@ builds:
       - CGO_ENABLED=1
     mod_timestamp: '{{ .CommitTimestamp }}'
     goos:
-      - linux
+      - darwin
     goarch:
-      - amd64
+      #- amd64
       - arm64
     goarm:
       - '6'
