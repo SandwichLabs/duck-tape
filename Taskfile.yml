@@ -2,10 +2,63 @@
 
 version: '3'
 
+vars:
+  BIN: "{{.ROOT_DIR}}/bin"
+
+env:
+  CGO_ENABLED: '1'
+
 tasks:
   default:
     cmds:
-      - task --list
+      - task: lint
+      - task: test
+      - task: build
+  goreleaser:install:
+    desc: Installs goreleaser
+    cmds:
+      - go install github.com/goreleaser/goreleaser@latest
+  golangci-lint:install:
+    desc: Installs golangci-lint
+    cmds:
+      - brew install golangci-lint
+  mod:
+    desc: Downloads and tidy Go modules
+    cmds:
+      - go mod download
+      - go mod tidy
+
+  clean:
+    desc: Cleans temp files and folders
+    cmds:
+      - rm -rf dist/
+      - rm -rf tmp/
+
+  test:
+    desc: Runs test suite
+    aliases: [t]
+    deps: [mod]
+    cmds:
+      - go test {{catLines .GO_PACKAGES}}
+    vars:
+      GO_PACKAGES:
+        sh: go list ./...
+  lint:
+    desc: Runs golangci-lint
+    aliases: [l]
+    sources:
+      - './**/*.go'
+      - .golangci.yml
+    cmds:
+      - golangci-lint run
+
+  lint:fix:
+    desc: Runs golangci-lint and fixes any issues
+    sources:
+      - './**/*.go'
+      - .golangci.yml
+    cmds:
+      - golangci-lint run --fix
   build:
     vars:
       USE_DIR: '{{.DIR | default "$PWD" }}'
@@ -16,11 +69,6 @@ tasks:
       - dist/dt
     sources:
       - ./**/*.go
-
-  goreleaser:install:
-    desc: Installs goreleaser
-    cmds:
-      - go install github.com/goreleaser/goreleaser@latest
   build:release:
     desc: Build the DuckTape binaries using goreleaser
     cmds:
