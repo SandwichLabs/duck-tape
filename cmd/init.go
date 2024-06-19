@@ -5,8 +5,10 @@ package cmd
 
 import (
 	"github.com/SandwichLabs/dt/config"
+	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
 )
 
 // initCmd represents the get command
@@ -17,7 +19,10 @@ var initCmd = &cobra.Command{
 	Usage: dt init
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		config.EnsureConfig(viper.GetViper())
+		homeDir, err := os.UserHomeDir() // get the user's home directory, default location for config
+		cobra.CheckErr(err)
+		log.Printf("Initializing config file in: %s", homeDir)
+		config.EnsureConfig(viper.GetViper(), homeDir)
 	},
 }
 

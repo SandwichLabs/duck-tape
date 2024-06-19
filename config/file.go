@@ -22,14 +22,14 @@ func WorkspacePath(workspace string) string {
 	return fmt.Sprintf("%s/%s", ConfigRootPath(), workspace)
 }
 
-func EnsureConfig(vip *viper.Viper) {
+func EnsureConfig(vip *viper.Viper, configDirPath string) {
 	workspace := vip.GetString("workspace")
-	home, err := os.UserHomeDir()
-	cobra.CheckErr(err)
-	configPath := fmt.Sprintf("%s/.dt", home)
-	_, err = SetWorkspaceDb(workspace, "dt.db", true)
+
+	configPath := fmt.Sprintf("%s/.dt", configDirPath)
+	_, err := SetWorkspaceDb(workspace, "dt.db", true)
 	cobra.CheckErr(err)
 	EnsureWorkspace(configPath, workspace)
+
 	err = vip.SafeWriteConfig()
 	cobra.CheckErr(err)
 }
