@@ -73,6 +73,14 @@ func initConfig() {
 			err = os.MkdirAll(configPath, 0755)
 			cobra.CheckErr(err)
 		}
+
+		fullConfigPath := fmt.Sprintf("%s/config.yaml", configPath)
+		_, err = os.Stat(fullConfigPath)
+		if os.IsNotExist(err) {
+			_, err = os.Create(fullConfigPath)
+			cobra.CheckErr(err)
+		}
+
 		viper.AddConfigPath(configPath)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName("config")
