@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/SandwichLabs/dt/config"
 	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -52,12 +53,10 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.dt/.dt.yaml)")
 	err := viper.BindPFlag("workspace", rootCmd.PersistentFlags().Lookup("workspace"))
 	cobra.CheckErr(err)
-	rootCmd.AddCommand(initCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	log.Infof("initConfig")
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -74,16 +73,32 @@ func initConfig() {
 			err = os.MkdirAll(configPath, 0755)
 			cobra.CheckErr(err)
 		}
+
+		fullConfigPath := fmt.Sprintf("%s/config.yaml", configPath)
+		_, err = os.Stat(fullConfigPath)
+		if os.IsNotExist(err) {
+			_, err = os.Create(fullConfigPath)
+			cobra.CheckErr(err)
+		}
+
 		viper.AddConfigPath(configPath)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName("config")
-		log.Infof("configPath: %s", viper.ConfigFileUsed())
+
+		config.EnsureWorkspace(configPath, viper.GetString("workspace"))
+
+		cobra.CheckErr(err)
+
+		err = viper.WriteConfig()
+		cobra.CheckErr(err)
+
+		log.Debugf("configPath: %s", viper.ConfigFileUsed())
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		log.Debugf("Using config file: %s", viper.ConfigFileUsed())
 	}
 }
