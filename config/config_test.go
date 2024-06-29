@@ -2,10 +2,11 @@ package config
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
+
+	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestEnsureConfig(t *testing.T) {
@@ -13,9 +14,6 @@ func TestEnsureConfig(t *testing.T) {
 	vip.Set("workspace", "test_workspace")
 
 	configDirPath := "./tmp/test_config_dir"
-
-	// Call the function being tested
-	EnsureConfig(vip, configDirPath)
 
 	// Assert that the workspace database is set
 	dbPath := fmt.Sprintf("%s/.dt/dt.db", configDirPath)

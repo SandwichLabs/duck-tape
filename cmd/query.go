@@ -39,7 +39,7 @@ var queryCmd = &cobra.Command{
 		workspaceRoot := config.WorkspacePath(workspace)
 
 		dbPath := fmt.Sprintf("%s/%s", workspaceRoot, viper.GetString(fmt.Sprintf("%s.dbLocation", workspace)))
-		log.Infof("Database path: %s", dbPath)
+		log.Debugf("Database path: %s", dbPath)
 
 		query := args[0]
 
