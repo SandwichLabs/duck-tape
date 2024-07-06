@@ -38,5 +38,6 @@ func EnsureWorkspace(root_path string, workspace string) {
 	} else {
 		log.Debugf("Workspace folder already exists at: %s", workspacePath)
 	}
-	SetWorkspaceDb(workspace, "dt.db", false)
+	_, err = SetWorkspaceDb(workspace, "dt.db", false)
+	cobra.CheckErr(err)
 }
