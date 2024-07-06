@@ -11,7 +11,7 @@ Give your terminal sql super powers.
 Prebuilt binaries are available from the [releases page](https://github.com/zorndorff/duck-tape/releases). You can also install the latest version from source using the following command:
 
 ```bash
-git clone https://github.com/zorndorff/duck-tape.git
+git clone git@github.com:SandwichLabs/duck-tape.git
 cd duck-tape
 go build .
 sudo mv dt /usr/local/bin/
