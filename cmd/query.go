@@ -6,19 +6,20 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/SandwichLabs/dt/config"
 	"github.com/SandwichLabs/dt/database"
 	"github.com/SandwichLabs/dt/format"
-	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 // transformCmd represents the transform command
 var queryCmd = &cobra.Command{
-	Use:   "query",
-	Short: "query datasources",
+	Use:     "query",
+	Aliases: []string{"q"},
+	Short:   "query datasources",
 	Long: `Runs the query against the datasource.
 	Basic Usage: 
 	dt query "create table test (id int, name text);"
@@ -39,7 +40,7 @@ var queryCmd = &cobra.Command{
 		workspaceRoot := config.WorkspacePath(workspace)
 
 		dbPath := fmt.Sprintf("%s/%s", workspaceRoot, viper.GetString(fmt.Sprintf("%s.dbLocation", workspace)))
-		log.Debugf("Database path: %s", dbPath)
+		slog.Debug("Database path:", "dbPath", dbPath)
 
 		query := args[0]
 

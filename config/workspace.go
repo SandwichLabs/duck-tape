@@ -3,7 +3,8 @@ package config
 import (
 	"errors"
 	"fmt"
-	"github.com/charmbracelet/log"
+	"log/slog"
+
 	"github.com/spf13/viper"
 )
 
@@ -16,7 +17,7 @@ func SetWorkspaceDb(workspace string, name string, save bool) (ok bool, err erro
 	if save {
 		err := viper.WriteConfig()
 		if err != nil {
-			log.Fatalf("error writing config: %v", err)
+			slog.Error("error writing config", "error", err)
 			return false, errors.New("error saving workspace db location")
 		}
 	}
@@ -28,7 +29,7 @@ func SetWorkspaceConnection(workspace string, connection ConnectionConfig, save 
 	if save {
 		err := viper.WriteConfig()
 		if err != nil {
-			log.Fatalf("SetWorkSpaceConnection: %v", err)
+			slog.Error("SetWorkSpaceConnection Error", "Error", err)
 			return false, errors.New("error setting workspace connection")
 		}
 	}
@@ -50,11 +51,6 @@ func ListWorkspaceConnections(workspace string) ([]string, error) {
 		return nil, errors.New("no connections found in workspace")
 	}
 	// Map of all keys in the workspaceConnections and return a string array container the 'name' of each connection
-
-	for _, connection := range workspaceConnections.AllSettings() {
-
-		fmt.Printf("%v\n", connection)
-	}
 
 	return workspaceConnections.AllKeys(), nil
 }
