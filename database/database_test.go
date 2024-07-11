@@ -3,7 +3,7 @@ package database_test
 import (
 	"testing"
 
-	"github.com/SandwichLabs/dt/database"
+	"github.com/SandwichLabs/duck-tape/database"
 	"github.com/stretchr/testify/assert"
 )
 

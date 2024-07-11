@@ -6,7 +6,7 @@ package cmd
 import (
 	"log/slog"
 
-	"github.com/SandwichLabs/dt/config"
+	"github.com/SandwichLabs/duck-tape/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

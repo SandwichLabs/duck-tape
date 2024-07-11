@@ -1,4 +1,4 @@
-module github.com/SandwichLabs/dt
+module github.com/SandwichLabs/duck-tape
 
 go 1.22.0
 

@@ -6,7 +6,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 
-	"github.com/SandwichLabs/dt/config"
+	"github.com/SandwichLabs/duck-tape/config"
 	"github.com/charmbracelet/log"
 	"github.com/marcboeker/go-duckdb"
 	"github.com/spf13/cobra"

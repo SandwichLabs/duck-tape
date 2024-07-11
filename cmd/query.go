@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/SandwichLabs/dt/config"
-	"github.com/SandwichLabs/dt/database"
-	"github.com/SandwichLabs/dt/format"
+	"github.com/SandwichLabs/duck-tape/config"
+	"github.com/SandwichLabs/duck-tape/database"
+	"github.com/SandwichLabs/duck-tape/format"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
