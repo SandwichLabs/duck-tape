@@ -1,7 +1,7 @@
 /*
 Copyright © 2024 Zac Orndorff zac@orndorff.dev
 */
-package config
+package cmd
 
 import (
 	"fmt"

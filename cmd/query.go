@@ -8,9 +8,6 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/SandwichLabs/dt/config"
-	"github.com/SandwichLabs/dt/database"
-	"github.com/SandwichLabs/dt/format"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -37,7 +34,7 @@ var queryCmd = &cobra.Command{
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		workspace := viper.GetString("workspace")
-		workspaceRoot := config.WorkspacePath(workspace)
+		workspaceRoot := WorkspacePath(workspace)
 
 		dbPath := fmt.Sprintf("%s/%s", workspaceRoot, viper.GetString(fmt.Sprintf("%s.dbLocation", workspace)))
 		slog.Debug("Database path:", "dbPath", dbPath)
@@ -46,16 +43,16 @@ var queryCmd = &cobra.Command{
 
 		connections, _ := cmd.Flags().GetStringArray("connections")
 
-		client := database.New(
-			database.WithNumThreads(4),
-			database.WithPlugins([]string{"json", "httpfs", "postgres"}),
-			database.WithWorkspace(workspace),
-			database.WithConnectionStrings(connections),
-			database.WithDatabasePath(dbPath),
-			database.Init(),
+		client := NewDatabaseClient(
+			WithNumThreads(4),
+			WithPlugins([]string{"json", "httpfs", "postgres"}),
+			WithWorkspace(workspace),
+			WithConnectionStrings(connections),
+			WithDatabasePath(dbPath),
+			InitDatabaseClient(),
 		)
 
-		db, err := database.Open(*client)
+		db, err := OpenConnection(*client)
 
 		cobra.CheckErr(err)
 
@@ -107,7 +104,7 @@ var queryCmd = &cobra.Command{
 				valueMap[columns[i]] = col
 			}
 
-			valueString, err := format.ToJsonString(valueMap)
+			valueString, err := ToJsonString(valueMap)
 			cobra.CheckErr(err)
 
 			fmt.Fprintln(cmd.OutOrStdout(), valueString)

@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © Zac Orndorff <zac@orndorff.dev>
 */
 package cmd
 

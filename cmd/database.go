@@ -1,4 +1,4 @@
-package database
+package cmd
 
 import (
 	"context"
@@ -6,13 +6,12 @@ import (
 	"database/sql/driver"
 	"fmt"
 
-	"github.com/SandwichLabs/dt/config"
-	"github.com/charmbracelet/log"
 	"github.com/marcboeker/go-duckdb"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/slog"
 )
 
-type Client struct {
+type DatabaseClient struct {
 	config Config
 	*duckdb.Connector
 }
@@ -20,39 +19,39 @@ type Client struct {
 type Config struct {
 	NumThreads   int
 	Plugins      []string
-	Connections  []config.ConnectionConfig
+	Connections  []ConnectionConfig
 	DatabasePath string
 	Workspace    string
 	BootQueries  []string
 }
 
-func New(options ...func(*Client)) *Client {
-	svr := &Client{}
+func NewDatabaseClient(options ...func(*DatabaseClient)) *DatabaseClient {
+	svr := &DatabaseClient{}
 	for _, o := range options {
 		o(svr)
 	}
 	return svr
 }
 
-func WithNumThreads(num int) func(*Client) {
-	return func(c *Client) {
+func WithNumThreads(num int) func(*DatabaseClient) {
+	return func(c *DatabaseClient) {
 		c.config.NumThreads = num
 	}
 }
 
-func WithPlugins(plugins []string) func(*Client) {
-	return func(c *Client) {
+func WithPlugins(plugins []string) func(*DatabaseClient) {
+	return func(c *DatabaseClient) {
 		c.config.Plugins = plugins
 	}
 }
 
-func WithConnectionStrings(connections []string) func(*Client) {
-	return func(c *Client) {
+func WithConnectionStrings(connections []string) func(*DatabaseClient) {
+	return func(c *DatabaseClient) {
 
-		connectionConfigs := []config.ConnectionConfig{}
+		connectionConfigs := []ConnectionConfig{}
 
 		for _, connection_name := range connections {
-			conn, err := config.WorkspaceConnection(c.config.Workspace, connection_name)
+			conn, err := WorkspaceConnection(c.config.Workspace, connection_name)
 
 			cobra.CheckErr(err)
 
@@ -63,26 +62,26 @@ func WithConnectionStrings(connections []string) func(*Client) {
 	}
 }
 
-func WithWorkspace(workspace string) func(*Client) {
-	return func(c *Client) {
+func WithWorkspace(workspace string) func(*DatabaseClient) {
+	return func(c *DatabaseClient) {
 		c.config.Workspace = workspace
 	}
 }
 
-func WithDatabasePath(path string) func(*Client) {
-	return func(c *Client) {
+func WithDatabasePath(path string) func(*DatabaseClient) {
+	return func(c *DatabaseClient) {
 		c.config.DatabasePath = path
 	}
 }
 
-func WithBootQueries(queries []string) func(*Client) {
-	return func(c *Client) {
+func WithBootQueries(queries []string) func(*DatabaseClient) {
+	return func(c *DatabaseClient) {
 		c.config.BootQueries = queries
 	}
 }
 
-func Init() func(*Client) {
-	return func(c *Client) {
+func InitDatabaseClient() func(*DatabaseClient) {
+	return func(c *DatabaseClient) {
 		connector, err := duckdb.NewConnector(fmt.Sprintf("%s?threads=%d", c.config.DatabasePath, c.config.NumThreads), func(execer driver.ExecerContext) error {
 			var bootQueries []string
 
@@ -98,22 +97,22 @@ func Init() func(*Client) {
 			for _, query := range bootQueries {
 				_, errs := execer.ExecContext(context.Background(), query, nil)
 				if errs != nil {
-					log.Fatal(errs)
+					slog.Error("Error running initial boot setup", "Error", errs)
 				}
-				log.Debug("executed: ", query)
+				slog.Debug("Executed boot query", "query", query)
 			}
 			return nil
 		})
 
 		if err != nil {
-			log.Fatal(err)
+			slog.Error("Error initializing database client", err)
 		}
 
 		c.Connector = connector
 	}
 }
 
-func Open(conn Client) (*sql.DB, error) {
+func OpenConnection(conn DatabaseClient) (*sql.DB, error) {
 	db := sql.OpenDB(conn.Connector)
 	return db, nil
 }

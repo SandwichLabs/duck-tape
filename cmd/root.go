@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 Zac Orndorff zac@orndorff.dev
 */
 package cmd
 
@@ -8,12 +8,12 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/SandwichLabs/dt/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
+var logLevel slog.LevelVar
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -48,7 +48,11 @@ func Execute() {
 }
 
 func init() {
+	SetJsonHandler(&logLevel)
+	SetLogLevel("info", &logLevel)
+
 	cobra.OnInitialize(initConfig)
+
 	rootCmd.PersistentFlags().StringP("workspace", "w", "dev", "workspace folder (default is $HOME/.dt/dev)")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.dt/.dt.yaml)")
 	err := viper.BindPFlag("workspace", rootCmd.PersistentFlags().Lookup("workspace"))
@@ -85,7 +89,7 @@ func initConfig() {
 		viper.SetConfigType("yaml")
 		viper.SetConfigName("config")
 
-		config.EnsureWorkspace(configPath, viper.GetString("workspace"))
+		EnsureWorkspace(configPath, viper.GetString("workspace"))
 
 		cobra.CheckErr(err)
 
@@ -96,9 +100,12 @@ func initConfig() {
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
+	// Set the log level using the config file and/or environment variables
 
+	SetLogLevel(viper.GetString("LOG_LEVEL"), &logLevel)
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		slog.Debug("Using config file", "configFile", viper.ConfigFileUsed())
 	}
+
 }
