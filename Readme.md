@@ -29,3 +29,23 @@ dt create connection # Follow the interactive prompts to create a new connection
 
 dt query "SELECT * FROM connection_name.some_table" -c <connection_name> # Run a query on a specific connection
 ```
+
+## Todo
+
+**Database Support**
+- [ ] MySQL
+- [x] Postgres
+- [ ] DuckDB
+- [ ] SQLite
+
+**File Support**
+- [x] CSV
+- [x] JSON
+- [x] Parquet
+
+**Features**
+- [x] Query Results to JSON
+- [x] Query Results to File - Needs documentation
+- [ ] Query Results to CSV
+- [ ] Save Query aliases to config
+- [ ] Interactive Query Builder?
