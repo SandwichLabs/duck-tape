@@ -15,6 +15,9 @@ import (
 
 var cfgFile string
 
+var logger slog.Logger
+var programLevel slog.LevelVar
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "dt",
@@ -48,6 +51,7 @@ func Execute() {
 }
 
 func init() {
+	 = new(slog.LevelVar) // Info by default
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringP("workspace", "w", "dev", "workspace folder (default is $HOME/.dt/dev)")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.dt/.dt.yaml)")
