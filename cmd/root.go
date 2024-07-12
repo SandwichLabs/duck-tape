@@ -8,7 +8,6 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/SandwichLabs/duck-tape/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -90,7 +89,7 @@ func initConfig() {
 		viper.SetConfigType("yaml")
 		viper.SetConfigName("config")
 
-		config.EnsureWorkspace(configPath, viper.GetString("workspace"))
+		EnsureWorkspace(configPath, viper.GetString("workspace"))
 
 		cobra.CheckErr(err)
 

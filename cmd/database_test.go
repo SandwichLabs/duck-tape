@@ -1,28 +1,28 @@
-package database_test
+package cmd_test
 
 import (
 	"testing"
 
-	"github.com/SandwichLabs/duck-tape/database"
+	"github.com/SandwichLabs/duck-tape/cmd"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestOpen(t *testing.T) {
 	// Create a test client
-	client := database.New(
-		database.WithNumThreads(4),
-		database.WithWorkspace("test_workspace"),
-		database.WithDatabasePath("test.db"),
-		database.Init(),
+	client := cmd.NewDatabaseClient(
+		cmd.WithNumThreads(4),
+		cmd.WithWorkspace("test_workspace"),
+		cmd.WithDatabasePath("test.db"),
+		cmd.InitDatabaseClient(),
 	)
 
 	// Open the database connection
-	db, err := database.Open(*client)
+	db, err := cmd.OpenConnection(*client)
 	assert.NoError(t, err)
 	defer db.Close()
 
 	// Perform a simple query
-	rows, err := database.Query(db, "SELECT 1+1 as answer")
+	rows, err := cmd.Query(db, "SELECT 1+1 as answer")
 	assert.NoError(t, err)
 	defer rows.Close()
 
@@ -36,20 +36,20 @@ func TestOpen(t *testing.T) {
 
 func TestPrepare(t *testing.T) {
 	// Create a test client
-	client := database.New(
-		database.WithNumThreads(4),
-		database.WithWorkspace("test_workspace"),
-		database.WithDatabasePath("test.db"),
-		database.Init(),
+	client := cmd.NewDatabaseClient(
+		cmd.WithNumThreads(4),
+		cmd.WithWorkspace("test_workspace"),
+		cmd.WithDatabasePath("test.db"),
+		cmd.InitDatabaseClient(),
 	)
 
 	// Open the database connection
-	db, err := database.Open(*client)
+	db, err := cmd.OpenConnection(*client)
 	assert.NoError(t, err)
 	defer db.Close()
 
 	// Prepare a statement
-	stmt, err := database.Prepare(db, "SELECT 1+? as answer")
+	stmt, err := cmd.Prepare(db, "SELECT 1+? as answer")
 	assert.NoError(t, err)
 	defer stmt.Close()
 

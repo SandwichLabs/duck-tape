@@ -6,7 +6,6 @@ package cmd
 import (
 	"log/slog"
 
-	"github.com/SandwichLabs/duck-tape/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -16,9 +15,9 @@ var addConnectionCmd = &cobra.Command{
 	Short: "Add a new connection",
 	Run: func(cmd *cobra.Command, args []string) {
 		workspace := viper.GetString("workspace")
-		connection := config.ConnectionConfigForm()
+		connection := ConnectionConfigForm()
 		slog.Info("saving connection", "connection", connection)
-		_, err := config.SetWorkspaceConnection(workspace, connection, true)
+		_, err := SetWorkspaceConnection(workspace, connection, true)
 		cobra.CheckErr(err)
 	},
 }
