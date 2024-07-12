@@ -5,10 +5,10 @@ package cmd
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/SandwichLabs/dt/config"
-	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -92,13 +92,13 @@ func initConfig() {
 		err = viper.WriteConfig()
 		cobra.CheckErr(err)
 
-		log.Debugf("configPath: %s", viper.ConfigFileUsed())
+		slog.Debug("Configuration file", "configFile", viper.ConfigFileUsed())
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		log.Debugf("Using config file: %s", viper.ConfigFileUsed())
+		slog.Debug("Using config file", "configFile", viper.ConfigFileUsed())
 	}
 }
