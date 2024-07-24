@@ -1,6 +1,3 @@
-/*
-Copyright © 2024 Zac Orndorff zac@orndorff.dev
-*/
 package cmd
 
 import (

@@ -1,33 +1,9 @@
-/*
-Copyright © 2024 Zac Orndorff zac@orndorff.dev
-*/
-package cmd
+package connection
 
 import (
-	"fmt"
-
 	"github.com/charmbracelet/huh"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
-
-type ConnectionConfig struct {
-	ConnString string `yaml:"conn_string"`
-	Name       string `yaml:"name"`
-	Type       string `yaml:"type"`
-}
-
-func (c ConnectionConfig) String() string {
-	return fmt.Sprintf("ConnectionConfig{ConnString: %s, Name: %s, Type: %s}", c.ConnString, c.Name, c.Type)
-}
-
-func ConnectionFromViper(v *viper.Viper) ConnectionConfig {
-	return ConnectionConfig{
-		ConnString: v.GetString("ConnString"),
-		Name:       v.GetString("Name"),
-		Type:       v.GetString("Type"),
-	}
-}
 
 func ConnectionConfigForm() ConnectionConfig {
 	var (

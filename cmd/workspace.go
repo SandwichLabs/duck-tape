@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/SandwichLabs/duck-tape/connection"
 	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -56,12 +57,12 @@ func SetWorkspaceConnection(workspace string, connection ConnectionConfig, save 
 	return true, nil
 }
 
-func WorkspaceConnection(workspace string, connectionName string) (ConnectionConfig, error) {
+func WorkspaceConnection(workspace string, connectionName string) (*connection.ConnectionConfig, error) {
 	configConn := viper.Sub(getWorkspaceConnectionKey(workspace, connectionName))
 	if configConn == nil {
-		return ConnectionConfig{}, errors.New("connection not found in workspace")
+		return &connection.ConnectionConfig{}, errors.New("connection not found in workspace")
 	}
-	return ConnectionFromViper(configConn), nil
+	return connection.FromViper(configConn), nil
 }
 
 func ListWorkspaceConnections(workspace string) ([]string, error) {

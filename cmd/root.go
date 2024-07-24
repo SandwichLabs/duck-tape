@@ -8,9 +8,14 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/SandwichLabs/duck-tape/connection"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+type DuckTapeTool struct {
+	connectionRepo connection.Repository
+}
 
 var cfgFile string
 var logLevel slog.LevelVar
@@ -40,7 +45,9 @@ var rootCmd = &cobra.Command{
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute(dt *DuckTapeTool) {
+	// Add the connection repository to the DuckTapeTool
+	dt.connectionRepo = connection.NewRepository()
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
