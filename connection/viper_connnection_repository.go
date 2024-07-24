@@ -1,13 +1,14 @@
 package connection
 
+import "github.com/spf13/viper"
+
 type ViperConnectionRepository struct {
-	GetAllFunc         func() ([]*ConnectionConfig, error)
-	GetFunc            func(name string) (*ConnectionConfig, error)
-	CreateOrUpdateFunc func(c *ConnectionConfig) error
-	DeleteFunc         func(name string) error
+	viper *viper.Viper
 }
 
-func NewViperConnectionRepository(hourFactory Factory) *ViperConnectionRepository {
+func NewViperConnectionRepository(configStore *viper.Viper) *ViperConnectionRepository {
 
-	return &ViperConnectionRepository{}
+	return &ViperConnectionRepository{
+		viper: configStore,
+	}
 }
