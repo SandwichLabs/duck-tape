@@ -45,7 +45,7 @@ func SetWorkspaceDb(workspace string, name string, save bool) (ok bool, err erro
 	return true, nil
 }
 
-func SetWorkspaceConnection(workspace string, connection ConnectionConfig, save bool) (ok bool, err error) {
+func SetWorkspaceConnection(workspace string, connection connection.ConnectionConfig, save bool) (ok bool, err error) {
 	viper.Set(getWorkspaceConnectionKey(workspace, connection.Name), connection)
 	if save {
 		err := viper.WriteConfig()
