@@ -10,9 +10,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-var addConnectionCmd = &cobra.Command{
+var setConnectionCmd = &cobra.Command{
 	Use:   "connection",
-	Short: "Add a new connection",
+	Short: "Set a connection",
 	Run: func(cmd *cobra.Command, args []string) {
 		workspace := viper.GetString("workspace")
 		connection := ConnectionConfigForm()
