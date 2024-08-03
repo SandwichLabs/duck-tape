@@ -6,6 +6,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 
+	"github.com/SandwichLabs/duck-tape/connection"
 	"github.com/marcboeker/go-duckdb"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/slog"
@@ -19,7 +20,7 @@ type DatabaseClient struct {
 type Config struct {
 	NumThreads   int
 	Plugins      []string
-	Connections  []ConnectionConfig
+	Connections  []*connection.ConnectionConfig
 	DatabasePath string
 	Workspace    string
 	BootQueries  []string
@@ -48,7 +49,7 @@ func WithPlugins(plugins []string) func(*DatabaseClient) {
 func WithConnectionStrings(connections []string) func(*DatabaseClient) {
 	return func(c *DatabaseClient) {
 
-		connectionConfigs := []ConnectionConfig{}
+		connectionConfigs := []*connection.ConnectionConfig{}
 
 		for _, connection_name := range connections {
 			conn, err := WorkspaceConnection(c.config.Workspace, connection_name)

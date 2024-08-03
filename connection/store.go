@@ -1,6 +1,6 @@
 package connection
 
-type Repository interface {
+type Store interface {
 	// Get all connections
 	GetAll() ([]*ConnectionConfig, error)
 	// Get a connection by name
