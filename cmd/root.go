@@ -61,6 +61,11 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	viper.AutomaticEnv() // read in environment variables that match
+	// Set the log level using the config file and/or environment variables
+
+	SetLogLevel(viper.GetString("LOG_LEVEL"), &logLevel)
+
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -93,16 +98,9 @@ func initConfig() {
 
 		cobra.CheckErr(err)
 
-		err = viper.WriteConfig()
-		cobra.CheckErr(err)
-
 		slog.Debug("Configuration file", "configFile", viper.ConfigFileUsed())
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
-	// Set the log level using the config file and/or environment variables
-
-	SetLogLevel(viper.GetString("LOG_LEVEL"), &logLevel)
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		slog.Debug("Using config file", "configFile", viper.ConfigFileUsed())
