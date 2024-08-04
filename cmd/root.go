@@ -14,7 +14,7 @@ import (
 )
 
 type DuckTapeTool struct {
-	connectionRepo connection.Repository
+	store connection.Store
 }
 
 var cfgFile string
@@ -47,7 +47,7 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute(dt *DuckTapeTool) {
 	// Add the connection repository to the DuckTapeTool
-	dt.connectionRepo = connection.NewRepository()
+	dt.store = connection.NewViperConnectionStore()
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
@@ -112,5 +112,4 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		slog.Debug("Using config file", "configFile", viper.ConfigFileUsed())
 	}
-
 }
