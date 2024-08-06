@@ -46,8 +46,8 @@ var queryCmd = &cobra.Command{
 		client := NewDatabaseClient(
 			WithNumThreads(4),
 			WithWorkspace(workspace),
-			WithConnectionsByName(connectionNames),
 			WithDatabasePath(dbPath),
+			WithConnectionsByName(connectionNames),
 			InitDatabaseClient(),
 		)
 
