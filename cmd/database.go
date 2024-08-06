@@ -116,10 +116,6 @@ func InitDatabaseClient() func(*DatabaseClient) {
 	}
 }
 
-func ConnectionPlugins([]string) []string {
-	return plugins
-}
-
 func OpenConnection(conn DatabaseClient) (*sql.DB, error) {
 	db := sql.OpenDB(conn.Connector)
 	return db, nil
