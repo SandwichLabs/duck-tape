@@ -41,13 +41,12 @@ var queryCmd = &cobra.Command{
 
 		query := args[0]
 
-		connections, _ := cmd.Flags().GetStringArray("connections")
+		connectionNames, _ := cmd.Flags().GetStringArray("connections")
 
 		client := NewDatabaseClient(
 			WithNumThreads(4),
-			WithPlugins([]string{"json", "httpfs", "postgres"}),
 			WithWorkspace(workspace),
-			WithConnectionStrings(connections),
+			WithConnectionsByName(connectionNames),
 			WithDatabasePath(dbPath),
 			InitDatabaseClient(),
 		)

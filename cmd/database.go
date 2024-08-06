@@ -45,19 +45,23 @@ func WithPlugins(plugins []string) func(*DatabaseClient) {
 	}
 }
 
-func WithConnectionStrings(connections []string) func(*DatabaseClient) {
+// Setup the connectionConfig with the connection details, plugins.
+func WithConnectionsByName(connectionNames []string) func(*DatabaseClient) {
 	return func(c *DatabaseClient) {
 
 		connectionConfigs := []ConnectionConfig{}
+		pluginsList := []string{}
 
-		for _, connection_name := range connections {
+		for _, connection_name := range connectionNames {
 			conn, err := WorkspaceConnection(c.config.Workspace, connection_name)
 
 			cobra.CheckErr(err)
 
 			connectionConfigs = append(connectionConfigs, conn)
+			pluginsList = append(pluginsList, conn.Type)
 		}
 
+		c.config.Plugins = pluginsList
 		c.config.Connections = connectionConfigs
 	}
 }
@@ -110,6 +114,10 @@ func InitDatabaseClient() func(*DatabaseClient) {
 
 		c.Connector = connector
 	}
+}
+
+func ConnectionPlugins([]string) []string {
+	return plugins
 }
 
 func OpenConnection(conn DatabaseClient) (*sql.DB, error) {

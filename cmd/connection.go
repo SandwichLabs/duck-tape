@@ -46,6 +46,8 @@ func ConnectionConfigForm() ConnectionConfig {
 				Options(
 					huh.NewOption("PostgreSql", "POSTGRES"),
 					huh.NewOption("Http(s3, http)", "HTTPSFS"),
+					huh.NewOption("MySql", "MYSQL"),
+					huh.NewOption("SQLite", "SQLITE"),
 				).
 				Value(&connType),
 			huh.NewInput().
