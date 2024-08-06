@@ -54,7 +54,6 @@ func WithConnectionsByName(connectionNames []string) func(*DatabaseClient) {
 
 		for _, connection_name := range connectionNames {
 			conn, err := WorkspaceConnection(c.config.Workspace, connection_name)
-
 			cobra.CheckErr(err)
 
 			connectionConfigs = append(connectionConfigs, conn)
@@ -85,7 +84,11 @@ func WithBootQueries(queries []string) func(*DatabaseClient) {
 }
 
 func InitDatabaseClient() func(*DatabaseClient) {
+	slog.Debug("Initializing database client")
 	return func(c *DatabaseClient) {
+
+		slog.Debug("c.config.Connections", "connections", c.config.Connections)
+
 		connector, err := duckdb.NewConnector(fmt.Sprintf("%s?threads=%d", c.config.DatabasePath, c.config.NumThreads), func(execer driver.ExecerContext) error {
 			var bootQueries []string
 
@@ -95,10 +98,14 @@ func InitDatabaseClient() func(*DatabaseClient) {
 			}
 
 			for _, attachment := range c.config.Connections {
+				slog.Debug("Attaching connection", "attachment", attachment)
 				bootQueries = append(bootQueries, fmt.Sprintf("ATTACH '%s' as %s (TYPE %s, READ_ONLY);", attachment.ConnString, attachment.Name, attachment.Type))
 			}
 
+			slog.Debug("Executing boot queries", "connections", c.config.Connections)
+
 			for _, query := range bootQueries {
+				slog.Debug("Running boot query", "query", query)
 				_, errs := execer.ExecContext(context.Background(), query, nil)
 				if errs != nil {
 					slog.Error("Error running initial boot setup", "Error", errs)

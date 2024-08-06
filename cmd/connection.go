@@ -23,9 +23,9 @@ func (c ConnectionConfig) String() string {
 
 func ConnectionFromViper(v *viper.Viper) ConnectionConfig {
 	return ConnectionConfig{
-		ConnString: v.GetString("ConnString"),
-		Name:       v.GetString("Name"),
-		Type:       v.GetString("Type"),
+		ConnString: v.GetString("conn_string"),
+		Name:       v.GetString("name"),
+		Type:       v.GetString("type"),
 	}
 }
 
