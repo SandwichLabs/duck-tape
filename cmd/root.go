@@ -4,7 +4,6 @@ Copyright © 2024 Zac Orndorff zac@orndorff.dev
 package cmd
 
 import (
-	"fmt"
 	"log/slog"
 	"os"
 
@@ -51,59 +50,10 @@ func init() {
 	SetJsonHandler(&logLevel)
 	SetLogLevel("info", &logLevel)
 
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(InitConfig)
 
 	rootCmd.PersistentFlags().StringP("workspace", "w", "dev", "workspace folder (default is $HOME/.dt/dev)")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.dt/.dt.yaml)")
 	err := viper.BindPFlag("workspace", rootCmd.PersistentFlags().Lookup("workspace"))
 	cobra.CheckErr(err)
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	viper.AutomaticEnv() // read in environment variables that match
-	// Set the log level using the config file and/or environment variables
-
-	SetLogLevel(viper.GetString("LOG_LEVEL"), &logLevel)
-
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-		configPath := fmt.Sprintf("%s/.dt", home)
-
-		// Search config in home directory with name ".testing" (without extension).
-		// create a .dt folder in the home directory if it doesn't exist
-		_, err = os.Stat(configPath)
-		if os.IsNotExist(err) {
-			err = os.MkdirAll(configPath, 0755)
-			cobra.CheckErr(err)
-		}
-
-		fullConfigPath := fmt.Sprintf("%s/config.yaml", configPath)
-		_, err = os.Stat(fullConfigPath)
-		if os.IsNotExist(err) {
-			_, err = os.Create(fullConfigPath)
-			cobra.CheckErr(err)
-		}
-
-		viper.AddConfigPath(configPath)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName("config")
-
-		EnsureWorkspace(configPath, viper.GetString("workspace"))
-
-		cobra.CheckErr(err)
-
-		slog.Debug("Configuration file", "configFile", viper.ConfigFileUsed())
-	}
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		slog.Debug("Using config file", "configFile", viper.ConfigFileUsed())
-	}
-
 }
