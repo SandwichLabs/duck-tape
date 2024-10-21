@@ -33,10 +33,10 @@ dt query "SELECT * FROM connection_name.some_table" -c <connection_name> # Run a
 ## Todo
 
 **Database Support**
-- [ ] MySQL
+- [x] MySQL
 - [x] Postgres
-- [ ] DuckDB
-- [ ] SQLite
+- [x] DuckDB
+- [x] SQLite
 
 **File Support**
 - [x] CSV
