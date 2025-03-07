@@ -30,3 +30,4 @@ tmp # ignore tmp directory
 go.work
 
 dist/
+*.db
