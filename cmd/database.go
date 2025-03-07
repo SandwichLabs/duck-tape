@@ -5,7 +5,8 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
-
+	"github.com/SandwichLabs/duck-tape/connection"
+	"github.com/SandwichLabs/duck-tape/workspace"
 	"github.com/marcboeker/go-duckdb"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/slog"
@@ -19,7 +20,7 @@ type DatabaseClient struct {
 type Config struct {
 	NumThreads   int
 	Plugins      []string
-	Connections  []ConnectionConfig
+	Connections  []connection.ConnectionConfig
 	DatabasePath string
 	Workspace    string
 	BootQueries  []string
@@ -49,11 +50,11 @@ func WithPlugins(plugins []string) func(*DatabaseClient) {
 func WithConnectionsByName(connectionNames []string) func(*DatabaseClient) {
 	return func(c *DatabaseClient) {
 
-		connectionConfigs := []ConnectionConfig{}
+		connectionConfigs := []connection.ConnectionConfig{}
 		pluginsList := []string{}
 
 		for _, connection_name := range connectionNames {
-			conn, err := WorkspaceConnection(c.config.Workspace, connection_name)
+			conn, err := workspace.WorkspaceConnection(c.config.Workspace, connection_name)
 			cobra.CheckErr(err)
 
 			connectionConfigs = append(connectionConfigs, conn)
