@@ -6,10 +6,10 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"log/slog"
-
+	"github.com/SandwichLabs/duck-tape/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"log/slog"
 )
 
 // transformCmd represents the transform command
@@ -34,7 +34,7 @@ var queryCmd = &cobra.Command{
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		workspace := viper.GetString("workspace")
-		workspaceRoot := WorkspacePath(workspace)
+		workspaceRoot := config.WorkspacePath(workspace)
 
 		dbPath := fmt.Sprintf("%s/%s", workspaceRoot, viper.GetString(fmt.Sprintf("%s.dbLocation", workspace)))
 		slog.Debug("Database path:", "dbPath", dbPath)

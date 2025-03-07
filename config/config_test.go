@@ -1,4 +1,4 @@
-package cmd_test
+package config_test
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/SandwichLabs/duck-tape/cmd"
+	"github.com/SandwichLabs/duck-tape/config"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,7 +14,7 @@ import (
 func TestEnsureConfig(t *testing.T) {
 	viper.Set("workspace", "test_workspace")
 
-	configDirPath := cmd.GetConfigPath()
+	configDirPath := config.GetConfigPath()
 
 	cmd.InitConfig()
 
