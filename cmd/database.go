@@ -100,7 +100,10 @@ func InitDatabaseClient() func(*DatabaseClient) {
 
 			for _, attachment := range c.config.Connections {
 				slog.Debug("Attaching connection", "attachment", attachment)
-				bootQueries = append(bootQueries, fmt.Sprintf("ATTACH '%s' as %s (TYPE %s, READ_ONLY);", attachment.ConnString, attachment.Name, attachment.Type))
+
+				slog.Info("Setting up connection", "name", attachment.Name, "type", attachment.Type, "readOrWrite", attachment.ReadWriteMode())
+
+				bootQueries = append(bootQueries, fmt.Sprintf("ATTACH '%s' as %s (TYPE %s %s);", attachment.ConnString, attachment.Name, attachment.Type, attachment.ReadWriteMode()))
 			}
 
 			slog.Debug("Executing boot queries", "connections", c.config.Connections)
