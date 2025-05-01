@@ -157,7 +157,7 @@ func getDataSummaryMarkdown(db *sql.DB) (string, error) {
 		slog.Debug("Getting summary for table", "table", tableName)
 		// Sanitize table name just in case, although SHOW TABLES should be safe
 		// A more robust approach would use parameterized queries if table names came from user input
-		summaryQuery := fmt.Sprintf("SUMMARIZE TABLE \"%s\";", strings.ReplaceAll(tableName, "\"", "\"\"")) // Basic quoting for safety
+		summaryQuery := fmt.Sprintf("SUMMARIZE TABLE %s;", strings.ReplaceAll(tableName, "\"", "\"\"")) // Basic quoting for safety
 
 		summaryRows, err := db.QueryContext(context.Background(), summaryQuery)
 		if err != nil {
@@ -184,7 +184,7 @@ func getDataSummaryMarkdown(db *sql.DB) (string, error) {
 // Helper to get table names
 func getTableNames(db *sql.DB) ([]string, error) {
 	// Slightly refined query to potentially exclude duckdb system tables if desired
-	rows, err := db.QueryContext(context.Background(), "SELECT name FROM (SHOW ALL TABLES) WHERE name NOT LIKE 'sqlite_%' ORDER BY name;")
+	rows, err := db.QueryContext(context.Background(), "SELECT ( database || '.' || schema || '.' || name) as name FROM (SHOW ALL TABLES) WHERE name NOT LIKE 'sqlite_%' ORDER BY name;")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get table names: %w", err)
 	}
