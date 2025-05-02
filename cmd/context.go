@@ -26,6 +26,9 @@ Example:
 		connectionNames, _ := cmd.Flags().GetStringArray("connections")
 		workspace := viper.GetString("workspace")
 		fragments, err := cmd.Flags().GetStringArray("fragments")
+
+		cobra.CheckErr(err)
+
 		runSummary, err := cmd.Flags().GetBool("summary")
 
 		cobra.CheckErr(err)
@@ -49,6 +52,7 @@ Example:
 		cobra.CheckErr(err)
 		defer db.Close()
 		slog.Debug("Database connection established", "workspace", workspace, "db", dbPath)
+
 		ioOutputStream := os.Stdout
 		// --- Gather Context ---
 		slog.Debug("Gathering database context...")
@@ -69,8 +73,8 @@ Example:
 			ioOutputStream.WriteString("\n<summary>\n")
 			ioOutputStream.WriteString(summaryMarkdown)
 			ioOutputStream.WriteString("\n</summary>\n")
-			ioOutputStream.WriteString("</database_info>\n")
 		}
+		ioOutputStream.WriteString("</database_info>\n")
 		// Add fragments if requested
 		if fragments != nil {
 			slog.Debug("Including fragments in the prompt", "fragments", fragments)
