@@ -56,24 +56,23 @@ Example:
 		ioOutputStream := os.Stdout
 		// --- Gather Context ---
 		slog.Debug("Gathering database context...")
-		schemaMarkdown, err := getSchemaMarkdown(db)
-		cobra.CheckErr(err)
-		slog.Debug("Schema gathered")
 		// Add database info
 		ioOutputStream.WriteString("<database_info>\n")
 		ioOutputStream.WriteString("<schema>\n")
-		ioOutputStream.WriteString(schemaMarkdown)
+		err = getSchemaMarkdown(db, ioOutputStream)
+		cobra.CheckErr(err)
+		slog.Debug("Schema gathered")
+
 		ioOutputStream.WriteString("\n</schema>\n")
 
 		if runSummary {
-			summaryMarkdown, err := getDataSummaryMarkdown(db)
+			ioOutputStream.WriteString("\n<summary>\n")
+			err = getDataSummaryMarkdown(db, ioOutputStream)
 			cobra.CheckErr(err)
 			slog.Debug("Data summaries gathered")
-
-			ioOutputStream.WriteString("\n<summary>\n")
-			ioOutputStream.WriteString(summaryMarkdown)
 			ioOutputStream.WriteString("\n</summary>\n")
 		}
+
 		ioOutputStream.WriteString("</database_info>\n")
 		// Add fragments if requested
 		if fragments != nil {
@@ -103,17 +102,16 @@ func init() {
 }
 
 // Fetches schema and formats as markdown
-func getSchemaMarkdown(db *sql.DB) (string, error) {
+func getSchemaMarkdown(db *sql.DB, ioOut *os.File) error {
 	rows, err := db.QueryContext(context.Background(), "SHOW ALL TABLES;")
 	if err != nil {
-		return "", fmt.Errorf("failed to show tables: %w", err)
+		return fmt.Errorf("failed to show tables: %w", err)
 	}
 	defer rows.Close()
 
 	// Simulate markdown table output
-	var md strings.Builder
-	md.WriteString("| database | schema | name | column_names | column_types | temporary |\n")
-	md.WriteString("|---|---|---|---|---|---|\n")
+	ioOut.WriteString("| database | schema | name | column_names | column_types | temporary |\n")
+	ioOut.WriteString("|---|---|---|---|---|---|\n")
 
 	cols, _ := rows.Columns() // Get column names for scanning
 	pointers := make([]interface{}, len(cols))
@@ -125,35 +123,34 @@ func getSchemaMarkdown(db *sql.DB) (string, error) {
 	for rows.Next() {
 		err = rows.Scan(pointers...)
 		if err != nil {
-			return "", fmt.Errorf("failed to scan table row: %w", err)
+			return fmt.Errorf("failed to scan table row: %w", err)
 		}
-		md.WriteString("| ")
+		ioOut.WriteString("| ")
 		for i := range cols {
 			if container[i] == nil {
-				md.WriteString("NULL")
+				ioOut.WriteString("NULL")
 			} else {
-				md.WriteString(fmt.Sprintf("%v", container[i]))
+				ioOut.WriteString(fmt.Sprintf("%v", container[i]))
 			}
-			md.WriteString(" | ")
+			ioOut.WriteString(" | ")
 		}
-		md.WriteString("\n")
+		ioOut.WriteString("\n")
 	}
 	if err = rows.Err(); err != nil {
-		return "", fmt.Errorf("error iterating table rows: %w", err)
+		return fmt.Errorf("error iterating table rows: %w", err)
 	}
 
-	return md.String(), nil
+	return nil
 }
 
 // Fetches table names and their summaries, formats as markdown
-func getDataSummaryMarkdown(db *sql.DB) (string, error) {
+func getDataSummaryMarkdown(db *sql.DB, ioOut *os.File) error {
 	tableNames, err := getTableNames(db)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	var md strings.Builder
-	md.WriteString("The Database contains the following tables:\n\n")
+	ioOut.WriteString("Summary of the table contents:\n\n")
 
 	for _, tableName := range tableNames {
 		slog.Debug("Getting summary for table", "table", tableName)
@@ -164,23 +161,24 @@ func getDataSummaryMarkdown(db *sql.DB) (string, error) {
 		summaryRows, err := db.QueryContext(context.Background(), summaryQuery)
 		if err != nil {
 			slog.Warn("Failed to summarize table", "table", tableName, "error", err)
-			md.WriteString(fmt.Sprintf("## %s:\n\n_Error fetching summary: %v_\n\n", tableName, err))
+			ioOut.WriteString(fmt.Sprintf("## %s:\n\n_Error fetching summary: %v_\n\n", tableName, err))
 			continue // Skip to next table on error
 		}
+
 		defer summaryRows.Close() // Close rows for each summary query
 
-		md.WriteString(fmt.Sprintf("## %s:\n\n", tableName))
+		ioOut.WriteString(fmt.Sprintf("## %s:\n\n", tableName))
 		summaryMd, err := formatRowsToMarkdown(summaryRows)
 		if err != nil {
 			slog.Warn("Failed to format summary to markdown", "table", tableName, "error", err)
-			md.WriteString(fmt.Sprintf("_Error formatting summary: %v_\n\n", err))
+			ioOut.WriteString(fmt.Sprintf("_Error formatting summary: %v_\n\n", err))
 		} else {
-			md.WriteString(summaryMd)
-			md.WriteString("\n")
+			ioOut.WriteString(summaryMd)
+			ioOut.WriteString("\n")
 		}
 	}
 
-	return md.String(), nil
+	return nil
 }
 
 // Helper to get table names
