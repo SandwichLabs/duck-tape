@@ -26,6 +26,7 @@ Example:
 		connectionNames, _ := cmd.Flags().GetStringArray("connections")
 		workspace := viper.GetString("workspace")
 		fragments, err := cmd.Flags().GetStringArray("fragments")
+		runSummary, err := cmd.Flags().GetBool("summary")
 
 		cobra.CheckErr(err)
 
@@ -60,15 +61,16 @@ Example:
 		ioOutputStream.WriteString(schemaMarkdown)
 		ioOutputStream.WriteString("\n</schema>\n")
 
-		summaryMarkdown, err := getDataSummaryMarkdown(db)
-		cobra.CheckErr(err)
-		slog.Debug("Data summaries gathered")
+		if runSummary {
+			summaryMarkdown, err := getDataSummaryMarkdown(db)
+			cobra.CheckErr(err)
+			slog.Debug("Data summaries gathered")
 
-		ioOutputStream.WriteString("\n<summary>\n")
-		ioOutputStream.WriteString(summaryMarkdown)
-		ioOutputStream.WriteString("\n</summary>\n")
-		ioOutputStream.WriteString("</database_info>\n")
-
+			ioOutputStream.WriteString("\n<summary>\n")
+			ioOutputStream.WriteString(summaryMarkdown)
+			ioOutputStream.WriteString("\n</summary>\n")
+			ioOutputStream.WriteString("</database_info>\n")
+		}
 		// Add fragments if requested
 		if fragments != nil {
 			slog.Debug("Including fragments in the prompt", "fragments", fragments)
@@ -92,6 +94,8 @@ func init() {
 	rootCmd.AddCommand(contextCmd)
 	contextCmd.Flags().StringArrayP("connections", "c", []string{}, "One or more connection configurations to attach (same as query)")
 	contextCmd.Flags().StringArrayP("fragments", "f", []string{}, "Include additional context from a file (can be used multiple times)")
+	contextCmd.Flags().Bool("summary", false, "Include the results of running SUMMARIZE on the tables in the database")
+
 }
 
 // Fetches schema and formats as markdown
