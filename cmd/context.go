@@ -48,29 +48,26 @@ Example:
 		cobra.CheckErr(err)
 		defer db.Close()
 		slog.Debug("Database connection established", "workspace", workspace, "db", dbPath)
-
+		ioOutputStream := os.Stdout
 		// --- Gather Context ---
 		slog.Debug("Gathering database context...")
 		schemaMarkdown, err := getSchemaMarkdown(db)
 		cobra.CheckErr(err)
 		slog.Debug("Schema gathered")
+		// Add database info
+		ioOutputStream.WriteString("<database_info>\n")
+		ioOutputStream.WriteString("<schema>\n")
+		ioOutputStream.WriteString(schemaMarkdown)
+		ioOutputStream.WriteString("\n</schema>\n")
 
 		summaryMarkdown, err := getDataSummaryMarkdown(db)
 		cobra.CheckErr(err)
 		slog.Debug("Data summaries gathered")
 
-		// --- Construct System Prompt ---
-		var contextString strings.Builder
-
-		// Add database info
-		contextString.WriteString("<database_info>\n")
-		contextString.WriteString("<schema>\n")
-		contextString.WriteString(schemaMarkdown)
-		contextString.WriteString("\n</schema>\n")
-		contextString.WriteString("\n<summary>\n")
-		contextString.WriteString(summaryMarkdown)
-		contextString.WriteString("\n</summary>\n")
-		contextString.WriteString("</database_info>\n")
+		ioOutputStream.WriteString("\n<summary>\n")
+		ioOutputStream.WriteString(summaryMarkdown)
+		ioOutputStream.WriteString("\n</summary>\n")
+		ioOutputStream.WriteString("</database_info>\n")
 
 		// Add fragments if requested
 		if fragments != nil {
@@ -80,17 +77,14 @@ Example:
 				if err != nil {
 					slog.Warn("Could not read fragment file, proceeding without it.", "path", fragment, "error", err)
 				} else {
-					contextString.WriteString(fmt.Sprintf("<document path=%s>\n", fragment))
-					contextString.Write(fragmentContent)
-					contextString.WriteString("\n</document>")
+					ioOutputStream.WriteString(fmt.Sprintf("<document path=%s>\n", fragment))
+					ioOutputStream.Write(fragmentContent)
+					ioOutputStream.WriteString("\n</document>")
 				}
 			}
 		}
 
-		finalcontextString := contextString.String()
-		slog.Debug("System prompt constructed")
-		// Write the output to stdout
-		fmt.Println(finalcontextString)
+		slog.Debug("Enjoy!")
 	},
 }
 
