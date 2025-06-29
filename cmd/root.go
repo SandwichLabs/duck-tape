@@ -93,6 +93,8 @@ func InitConfig() {
 		viper.AddConfigPath(configPath)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName("config")
+		err = viper.ReadInConfig()
+		cobra.CheckErr(err)
 
 		config.EnsureWorkspace(configPath, viper.GetString("workspace"))
 

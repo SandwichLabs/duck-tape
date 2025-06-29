@@ -5,10 +5,12 @@ package config
 
 import (
 	"fmt"
-	"github.com/SandwichLabs/duck-tape/workspace"
-	"github.com/spf13/cobra"
 	"log/slog"
 	"os"
+
+	"github.com/SandwichLabs/duck-tape/workspace"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func GetConfigPath() string {
@@ -38,6 +40,12 @@ func EnsureWorkspace(root_path string, workspaceName string) {
 	} else {
 		slog.Debug("Workspace folder already exists", "workspacePath", workspacePath)
 	}
-	_, err = workspace.SetWorkspaceDb(workspaceName, "dt.db", false)
+	currentDbPath := viper.GetString(fmt.Sprintf("%s.dbLocation", workspaceName))
+
+	if currentDbPath == "" {
+		_, err = workspace.SetWorkspaceDb(workspaceName, "dt.db", false)
+		cobra.CheckErr(err)
+		slog.Debug("Default database path set", "dbPath", "dt.db")
+	}
 	cobra.CheckErr(err)
 }
