@@ -4,13 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"os"
-	"strings"
-
-	"github.com/SandwichLabs/duck-tape/config" // Assuming config package exists as shown
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/exp/slog"
+	"os"
+	"strings"
 )
 
 // contextCmd represents the context command
@@ -33,10 +31,8 @@ Example:
 
 		cobra.CheckErr(err)
 
-		// --- Database Setup (Similar to queryCmd) ---
-		workspaceRoot := config.WorkspacePath(workspace) // Assuming config.WorkspacePath exists
-
-		dbPath := fmt.Sprintf("%s/%s", workspaceRoot, viper.GetString(fmt.Sprintf("%s.dbLocation", workspace)))
+		dbPath := viper.GetString(fmt.Sprintf("%s.dbLocation", workspace))
+		slog.Debug("Database path:", "dbPath", dbPath)
 
 		slog.Debug("Using database", "path", dbPath)
 

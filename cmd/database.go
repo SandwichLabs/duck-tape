@@ -89,8 +89,9 @@ func InitDatabaseClient() func(*DatabaseClient) {
 	return func(c *DatabaseClient) {
 
 		slog.Debug("c.config.Connections", "connections", c.config.Connections)
-
-		connector, err := duckdb.NewConnector(fmt.Sprintf("%s?threads=%d", c.config.DatabasePath, c.config.NumThreads), func(execer driver.ExecerContext) error {
+		connString := fmt.Sprintf("%s?threads=%d", c.config.DatabasePath, c.config.NumThreads)
+		slog.Debug("Creating DuckDB connector", "connString", connString)
+		connector, err := duckdb.NewConnector(connString, func(execer driver.ExecerContext) error {
 			var bootQueries []string
 
 			for _, plugin := range c.config.Plugins {
