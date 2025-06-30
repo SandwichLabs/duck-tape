@@ -43,7 +43,7 @@ func EnsureWorkspace(root_path string, workspaceName string) {
 	currentDbPath := viper.GetString(fmt.Sprintf("%s.dbLocation", workspaceName))
 
 	if currentDbPath == "" {
-		_, err = workspace.SetWorkspaceDb(workspaceName, "dt.db", false)
+		_, err = workspace.SetWorkspaceDb(workspaceName, fmt.Sprintf("%s/%s", workspacePath, "dt.db"), false)
 		cobra.CheckErr(err)
 		slog.Debug("Default database path set", "dbPath", "dt.db")
 	}
