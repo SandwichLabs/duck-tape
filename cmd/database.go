@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+
+	"github.com/SandwichLabs/duck-tape/config"
 	"github.com/SandwichLabs/duck-tape/connection"
 	"github.com/SandwichLabs/duck-tape/workspace"
 	"github.com/marcboeker/go-duckdb"
@@ -89,7 +91,13 @@ func InitDatabaseClient() func(*DatabaseClient) {
 	return func(c *DatabaseClient) {
 
 		slog.Debug("c.config.Connections", "connections", c.config.Connections)
-		connString := fmt.Sprintf("%s?threads=%d", c.config.DatabasePath, c.config.NumThreads)
+		databasePath := c.config.DatabasePath
+		if databasePath == "dt.db" || databasePath == "" {
+			// If the database path is not set, we use the default workspace database in /home/.dt/workspace_name/dt.db
+			databasePath = fmt.Sprintf("%s/dt.db", config.WorkspacePath(c.config.Workspace))
+		}
+
+		connString := fmt.Sprintf("%s?threads=%d", databasePath, c.config.NumThreads)
 		slog.Debug("Creating DuckDB connector", "connString", connString)
 		connector, err := duckdb.NewConnector(connString, func(execer driver.ExecerContext) error {
 			var bootQueries []string
