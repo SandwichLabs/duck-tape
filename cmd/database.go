@@ -9,7 +9,7 @@ import (
 	"github.com/SandwichLabs/duck-tape/config"
 	"github.com/SandwichLabs/duck-tape/connection"
 	"github.com/SandwichLabs/duck-tape/workspace"
-	"github.com/marcboeker/go-duckdb"
+	duckdb "github.com/marcboeker/go-duckdb"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/slog"
 )
