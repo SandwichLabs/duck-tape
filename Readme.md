@@ -46,6 +46,6 @@ dt query "SELECT * FROM connection_name.some_table" -c <connection_name> # Run a
 **Features**
 - [x] Query Results to JSON
 - [x] Query Results to File - Needs documentation
-- [ ] Query Results to CSV
-- [ ] Save Query aliases to config
-- [ ] Interactive Query Builder?
+- [x] Query Results to CSV
+- [x] Save Query aliases to config
+- [x] Interactive Query Builder?
