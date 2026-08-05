@@ -1,0 +1,37 @@
+{
+  "skill_name": "feature-tutorial",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I want to be able to move a duck-tape workspace between machines \u2014 basically a `dt workspace export` that bundles the workspace's connections and config (not the duckdb file itself) into a single portable file, and a matching import. Don't implement it for me \u2014 I want a tutorial that walks me through building it myself, what modules to create, what wiring is needed in the existing commands, tests etc. Call it tutorial-export.md",
+      "expected_output": "A single markdown tutorial grounded in the duck-tape codebase (references real files like cmd/workspace.go, workspace/workspace.go, config/config.go, viper config layout), with a CLI contract, design trade-offs, module walkthrough, wiring section, testing section. No source files modified.",
+      "files": [],
+      "assertions": [
+        "Every repository file path referenced in the tutorial (e.g. cmd/*.go, workspace/*.go, config/*.go) actually exists in the duck-tape repo",
+        "References at least 3 real symbols from the codebase (e.g. SetWorkspaceConnection, WorkspaceConnection, ListWorkspaceConnections, WorkspacePath, EnsureWorkspace, ConnectionConfig, viper)",
+        "Pins the user-facing CLI contract (example dt invocations for export and import) before diving into implementation details",
+        "Presents at least two alternative design approaches with explicit trade-offs before committing to one",
+        "Includes a testing section that uses the repo's actual test conventions (testify assertions, external _test packages, task test)",
+        "Is not a complete paste-ready implementation: some mechanical parts are deliberately elided, summarized, or left as exercises",
+        "Addresses the secrets/credentials problem: exported connection configs contain connection strings, and the tutorial explicitly discusses how to handle them",
+        "No files inside /home/user/duck-tape were created or modified by the run"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "right now dt q only prints json lines. our team wants a --format flag on the query command supporting csv and a pretty table too. can you walk me through how I'd build that myself instead of doing it? I learn better that way. save it as tutorial-formats.md",
+      "expected_output": "A markdown tutorial grounded in cmd/query.go, cmd/format.go (ToJsonString), covering a formatter abstraction, flag wiring, streaming vs buffered trade-offs for table output, tests in the repo's testify style. No source files modified.",
+      "files": [],
+      "assertions": [
+        "Every repository file path referenced in the tutorial actually exists in the duck-tape repo",
+        "References the existing JSON output path it is generalizing: ToJsonString and/or cmd/format.go",
+        "Pins the user-facing CLI contract (example dt q --format invocations) before diving into implementation details",
+        "Presents at least two alternative design approaches with explicit trade-offs before committing to one",
+        "Discusses the streaming-vs-buffering consequence: JSON lines and CSV can stream row-by-row, but a pretty table needs column widths and therefore buffering (or an explicit compromise)",
+        "Includes a testing section that uses the repo's actual test conventions (testify assertions, external _test packages, task test)",
+        "Is not a complete paste-ready implementation: some mechanical parts are deliberately elided, summarized, or left as exercises",
+        "No files inside /home/user/duck-tape were created or modified by the run"
+      ]
+    }
+  ]
+}
